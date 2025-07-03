@@ -14,7 +14,7 @@
   "homepage": "https://github.com/SuarezLuis/try-and-catch",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SuarezLuis/try-and-catch.git"
+    "url": "git+https://github.com/SuarezLuis/try-and-catch.git"
   },
   "bugs": {
     "url": "https://github.com/SuarezLuis/try-and-catch/issues"
