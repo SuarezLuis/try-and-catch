@@ -1,0 +1,39 @@
+{
+  "name": "try-and-catch",
+  "version": "1.0.0",
+  "description": "A utility function that wraps try-catch logic and returns a tuple with result and error",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "example": "node example.js",
+    "example:enhanced": "node enhanced-example.js",
+    "example:debug": "node debug-example.js",
+    "example:blocks": "node block-example.js",
+    "publish": "npm run test && npm run build && npm publish",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "try",
+    "catch",
+    "error",
+    "handling",
+    "utility",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}
