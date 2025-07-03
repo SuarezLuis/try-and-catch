@@ -1,6 +1,6 @@
 {
   "name": "try-and-catch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A utility function that wraps try-catch logic and returns a tuple with result and error",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,7 +22,11 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "os": ["darwin", "linux", "win32"],
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/SuarezLuis"
