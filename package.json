@@ -4,6 +4,29 @@
   "description": "A utility function that wraps try-catch logic and returns a tuple with result and error",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "homepage": "https://github.com/SuarezLuis/try-and-catch",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SuarezLuis/try-and-catch.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SuarezLuis/try-and-catch/issues"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "os": ["darwin", "linux", "win32"],
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/SuarezLuis"
+  },
   "scripts": {
     "build": "tsc",
     "test": "jest",
@@ -21,9 +44,15 @@
     "error",
     "handling",
     "utility",
-    "typescript"
+    "typescript",
+    "functional",
+    "tuple",
+    "safe",
+    "result",
+    "either",
+    "monad"
   ],
-  "author": "",
+  "author": "Luis Suarez <suarezluis@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^29.5.0",
