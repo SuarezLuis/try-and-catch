@@ -340,9 +340,11 @@ if (error) {
 
 ### v2.0.0
 - **💥 BREAKING**: Changed API from tuple `[result, error]` to object `{result, error}`
+- **✨ NEW**: Added automatic promise handling for async functions
 - **✨ NEW**: Added helper methods: `isOk`, `isError`, `unwrap`, `unwrapOr`
 - **✨ NEW**: Added debug mode with configurable logging
-- **✨ NEW**: Added block execution methods: `block()` and `asyncBlock()`
+- **✨ NEW**: Added block execution method: `block()`
+- **🗑️ REMOVED**: `asyncBlock()` method (redundant due to automatic promise handling)
 - **📚 DOCS**: Complete rewrite of documentation with comprehensive examples
 
 ## License
