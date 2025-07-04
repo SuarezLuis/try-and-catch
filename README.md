@@ -11,9 +11,17 @@ npm install try-and-catch
 ## Quick Start
 
 ```typescript
-import tryAndCatch from 'try-and-catch';
+import tryAndCatch from 'try-and-catch';## Changelog
 
-// Success case
+### v2.0.0 (Latest)
+- **💥 BREAKING**: Changed API from tuple `[result, error]` to object `{result, error}`
+- **✨ NEW**: Automatic promise handling - async functions are now automatically awaited
+- **✨ NEW**: Added helper methods: `isOk`, `isError`, `unwrap`, `unwrapOr`
+- **✨ NEW**: Added debug mode with configurable logging
+- **✨ NEW**: Added block execution method: `block()` (supports both sync and async)
+- **🗑️ REMOVED**: `asyncBlock()` method (redundant due to automatic promise handling)
+- **🔧 IMPROVED**: Enhanced TypeScript support for async operations
+- **📚 DOCS**: Complete rewrite of documentation with comprehensive examplesase
 const { result, error } = tryAndCatch(JSON.parse, '{"valid": "json"}');
 if (error) {
   console.error('Parsing failed:', error);
