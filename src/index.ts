@@ -299,33 +299,6 @@ tryAndCatch.block = <T>(codeBlock: () => T): any => {
 };
 
 /**
- * Execute an async block of code safely
- * Returns a Promise that resolves to the result object
- * @param codeBlock - The async code block to execute
- * @returns Promise that resolves to result object with result and error properties
- * @example
- * ```typescript
- * const { result, error } = await tryAndCatch.asyncBlock(async () => {
- *   const response = await fetch('/api/data');
- *   const data = await response.json();
- *   return data.processed;
- * });
- * ```
- */
-tryAndCatch.asyncBlock = async <T>(
-  codeBlock: () => Promise<T>
-): Promise<TryAndCatchResult<T>> => {
-  try {
-    const result = await codeBlock();
-    return { result, error: null } as const;
-  } catch (error) {
-    const errorObject =
-      error instanceof Error ? error : new Error(String(error));
-    return { result: undefined, error: errorObject } as const;
-  }
-};
-
-/**
  * Enable debug mode with optional configuration
  * @param config - Optional debug configuration
  * @example

@@ -122,8 +122,8 @@ const { result: result2, error: error2 } = tryAndCatch.block(() => {
 ### Asynchronous Blocks
 
 ```typescript
-// Async block execution
-const { result: asyncResult, error: asyncError } = await tryAndCatch.asyncBlock(async () => {
+// Async block execution - automatically handled
+const { result: asyncResult, error: asyncError } = await tryAndCatch.block(async () => {
   const response = await fetch('/api/data');
   const data = await response.json();
   return data.processed;
@@ -259,10 +259,7 @@ Main function that executes any function safely.
 ### Block Execution
 
 #### `tryAndCatch.block<T>(codeBlock: () => T): TryAndCatchResult<T>`
-Execute a block of code safely without explicitly wrapping in a function.
-
-#### `tryAndCatch.asyncBlock<T>(codeBlock: () => Promise<T>): Promise<TryAndCatchResult<T>>`
-Execute an async block of code safely. Returns a Promise that resolves to the result tuple.
+Execute a block of code safely without explicitly wrapping in a function. Supports both sync and async code blocks with automatic promise handling.
 
 ### Helper Functions
 
@@ -329,7 +326,8 @@ if (error) {
 
 ### v2.1.0 (Latest)
 - **✨ NEW**: Automatic promise handling - async functions are now automatically awaited
-- **🔧 IMPROVED**: Enhanced TypeScript support for async operations
+- **�️ REMOVED**: `asyncBlock()` method (redundant due to automatic promise handling)
+- **�🔧 IMPROVED**: Enhanced TypeScript support for async operations  
 - **📚 DOCS**: Updated examples to showcase automatic async handling
 
 ### v2.0.0

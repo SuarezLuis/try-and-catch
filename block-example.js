@@ -47,10 +47,10 @@ if (blockError2) {
   console.log("Block result:", blockResult2);
 }
 
-// Example 3: Async block execution
+// Example 3: Async block execution (automatic promise handling)
 console.log("\nExample 3: Async block execution");
 async function asyncBlockExample() {
-  const { result, error } = await tryAndCatch.asyncBlock(async () => {
+  const { result, error } = await tryAndCatch.block(async () => {
     console.log("  - Step 1: Start async processing");
     await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -73,10 +73,10 @@ async function asyncBlockExample() {
   }
 }
 
-// Example 4: Async block with error
+// Example 4: Async block with error (automatic promise handling)
 console.log("\nExample 4: Async block with error");
 async function asyncBlockErrorExample() {
-  const { result, error } = await tryAndCatch.asyncBlock(async () => {
+  const { result, error } = await tryAndCatch.block(async () => {
     console.log("  - Step 1: Start async processing");
     await new Promise((resolve) => setTimeout(resolve, 50));
 

@@ -264,8 +264,8 @@ describe("tryAndCatch", () => {
       expect(error?.message).toBe("Block error");
     });
 
-    it("should execute async code blocks successfully with tryAndCatch.asyncBlock", async () => {
-      const { result, error } = await tryAndCatch.asyncBlock(async () => {
+    it("should execute async code blocks successfully with tryAndCatch.block", async () => {
+      const { result, error } = await tryAndCatch.block(async () => {
         return new Promise<string>((resolve) => {
           setTimeout(() => resolve("async result"), 10);
         });
@@ -275,8 +275,8 @@ describe("tryAndCatch", () => {
       expect(error).toBeNull();
     });
 
-    it("should handle errors in async code blocks with tryAndCatch.asyncBlock", async () => {
-      const { result, error } = await tryAndCatch.asyncBlock(async () => {
+    it("should handle errors in async code blocks with tryAndCatch.block", async () => {
+      const { result, error } = await tryAndCatch.block(async () => {
         throw new Error("Async block error");
       });
 
@@ -285,8 +285,8 @@ describe("tryAndCatch", () => {
       expect(error?.message).toBe("Async block error");
     });
 
-    it("should handle rejected promises in tryAndCatch.asyncBlock", async () => {
-      const { result, error } = await tryAndCatch.asyncBlock(async () => {
+    it("should handle rejected promises in tryAndCatch.block", async () => {
+      const { result, error } = await tryAndCatch.block(async () => {
         return Promise.reject(new Error("Promise rejected"));
       });
 
