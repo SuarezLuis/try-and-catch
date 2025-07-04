@@ -105,7 +105,7 @@ const debugLog = {
  * Type guard to check if a value is a Promise
  */
 const isPromise = (value: any): value is Promise<any> => {
-  return value && typeof value.then === 'function';
+  return value && typeof value.then === "function";
 };
 
 /**
@@ -163,7 +163,10 @@ const tryAndCatch = <TFunc extends AnyFunction>(
               errorObject.message
             );
             if (debugConfig.logTiming) {
-              debugLog.timing(`Function ${displayName} failed`, endTime - startTime);
+              debugLog.timing(
+                `Function ${displayName} failed`,
+                endTime - startTime
+              );
             }
           }
 
@@ -201,7 +204,7 @@ const tryAndCatch = <TFunc extends AnyFunction>(
 
     return { result: undefined, error: errorObject } as const;
   }
-}
+};
 
 /**
  * Helper function to check if a result is successful (no error)

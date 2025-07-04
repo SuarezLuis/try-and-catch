@@ -67,7 +67,7 @@ describe("tryAndCatch", () => {
 
   it("should handle async functions automatically", async () => {
     const asyncResolve = async () => {
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
       return "async result";
     };
 
@@ -79,7 +79,7 @@ describe("tryAndCatch", () => {
 
   it("should handle async functions that throw errors", async () => {
     const asyncThrow = async () => {
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
       throw new Error("async error");
     };
 
