@@ -39,8 +39,7 @@
     "example:enhanced": "node enhanced-example.js",
     "example:debug": "node debug-example.js",
     "example:blocks": "node block-example.js",
-    "publish": "npm run test && npm run build && npm publish",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run test && npm run build"
   },
   "keywords": [
     "try",
