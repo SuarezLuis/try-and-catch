@@ -324,7 +324,11 @@ if (error) {
 
 ## Changelog
 
-### v2.0.0 (Latest)
+### v2.0.1 (Latest)
+- **📝 DOCS**: Fixed README formatting and structure issues
+- **🐛 FIX**: Corrected broken Quick Start section and duplicate changelog entries
+
+### v2.0.0
 - **💥 BREAKING**: Changed API from tuple `[result, error]` to object `{result, error}`
 - **✨ NEW**: Added automatic promise handling for async functions
 - **✨ NEW**: Added helper methods: `isOk`, `isError`, `unwrap`, `unwrapOr`
