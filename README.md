@@ -1,6 +1,6 @@
 # try-and-catch
 
-A TypeScript utility function that wraps try-catch logic and returns a tuple with result and error, providing a cleaner way to handle errors without try-catch blocks.
+A TypeScript utility function that wraps try-catch logic and returns an object with result and error properties, providing a cleaner way to handle errors without try-catch blocks.
 
 ## Installation
 
@@ -14,7 +14,7 @@ npm install try-and-catch
 import tryAndCatch from 'try-and-catch';
 
 // Success case
-const [result, error] = tryAndCatch(JSON.parse, '{"valid": "json"}');
+const { result, error } = tryAndCatch(JSON.parse, '{"valid": "json"}');
 if (error) {
   console.error('Parsing failed:', error);
 } else {
@@ -22,7 +22,7 @@ if (error) {
 }
 
 // Error case
-const [parseResult, parseError] = tryAndCatch(JSON.parse, 'invalid json');
+const { result: parseResult, error: parseError } = tryAndCatch(JSON.parse, 'invalid json');
 if (parseError) {
   console.error('Parsing failed:', parseError); // SyntaxError: Unexpected token i in JSON at position 0
 }
@@ -30,11 +30,11 @@ if (parseError) {
 
 ## Core API
 
-### `tryAndCatch<T>(fn: T, ...args: Parameters<T>): [ReturnType<T>, null] | [undefined, Error]`
+### `tryAndCatch<T>(fn: T, ...args: Parameters<T>): {result: ReturnType<T>, error: null} | {result: undefined, error: Error}`
 
-Executes a function with the provided arguments and returns a tuple:
-- On success: `[result, null]`
-- On error: `[undefined, error]`
+Executes a function with the provided arguments and returns an object:
+- On success: `{result: value, error: null}`
+- On error: `{result: undefined, error: Error}`
 
 #### Parameters
 
@@ -43,9 +43,9 @@ Executes a function with the provided arguments and returns a tuple:
 
 #### Returns
 
-A tuple where:
-- First element: The function's return value on success, `undefined` on failure
-- Second element: `null` on success, `Error` on failure
+An object where:
+- `result`: The function's return value on success, `undefined` on failure
+- `error`: `null` on success, `Error` on failure
 
 ## Basic Examples
 
@@ -53,7 +53,7 @@ A tuple where:
 
 ```typescript
 const add = (a: number, b: number) => a + b;
-const [result, error] = tryAndCatch(add, 2, 3);
+const { result, error } = tryAndCatch(add, 2, 3);
 
 if (error) {
   console.error('Addition failed:', error);
@@ -69,7 +69,7 @@ const riskyOperation = () => {
   throw new Error('Something went wrong');
 };
 
-const [result, error] = tryAndCatch(riskyOperation);
+const { result, error } = tryAndCatch(riskyOperation);
 
 if (error) {
   console.error('Operation failed:', error.message); // "Something went wrong"
@@ -82,7 +82,7 @@ if (error) {
 
 ```typescript
 const multiply = (a: number, b: number, c: number) => a * b * c;
-const [result, error] = tryAndCatch(multiply, 2, 3, 4);
+const { result, error } = tryAndCatch(multiply, 2, 3, 4);
 
 if (error) {
   console.error('Multiplication failed:', error);
@@ -99,14 +99,14 @@ Execute blocks of code safely without explicitly wrapping in functions.
 
 ```typescript
 // Traditional way - wrap in anonymous function
-const [result1, error1] = tryAndCatch(() => {
+const { result: result1, error: error1 } = tryAndCatch(() => {
   const data = JSON.parse(jsonString);
   const processed = data.items.map(item => item.value);
   return processed.reduce((sum, val) => sum + val, 0);
 });
 
 // Cleaner syntax with block method
-const [result2, error2] = tryAndCatch.block(() => {
+const { result: result2, error: error2 } = tryAndCatch.block(() => {
   const data = JSON.parse(jsonString);
   const processed = data.items.map(item => item.value);
   return processed.reduce((sum, val) => sum + val, 0);
@@ -117,7 +117,7 @@ const [result2, error2] = tryAndCatch.block(() => {
 
 ```typescript
 // Async block execution
-const [asyncResult, asyncError] = await tryAndCatch.asyncBlock(async () => {
+const { result: asyncResult, error: asyncError } = await tryAndCatch.asyncBlock(async () => {
   const response = await fetch('/api/data');
   const data = await response.json();
   return data.processed;
@@ -127,7 +127,7 @@ const [asyncResult, asyncError] = await tryAndCatch.asyncBlock(async () => {
 ### Complex Data Processing
 
 ```typescript
-const [complexResult, complexError] = tryAndCatch.block(() => {
+const { result: complexResult, error: complexError } = tryAndCatch.block(() => {
   // Multiple operations that might throw
   const parsed = JSON.parse(jsonData);
   const validated = validateSchema(parsed);
@@ -155,12 +155,12 @@ Type guard that returns `true` if the result contains an error.
 
 ```typescript
 // Type-safe checking
-const [data, error] = tryAndCatch(JSON.parse, jsonString);
+const data = tryAndCatch(JSON.parse, jsonString);
 
-if (tryAndCatch.isOk([data, error])) {
-  console.log('Success:', data);
+if (tryAndCatch.isOk(data)) {
+  console.log('Success:', data.result);
 } else {
-  console.log('Error:', error.message);
+  console.log('Error:', data.error.message);
 }
 ```
 
@@ -174,11 +174,12 @@ Returns the result value if successful, otherwise returns the provided default v
 
 ```typescript
 // Unwrapping with fallback
-const safeData = tryAndCatch.unwrapOr([data, error], { default: 'fallback' });
+const data = tryAndCatch(JSON.parse, jsonString);
+const safeData = tryAndCatch.unwrapOr(data, { default: 'fallback' });
 
 // Unwrapping (throws on error)
 try {
-  const result = tryAndCatch.unwrap([data, error]);
+  const result = tryAndCatch.unwrap(data);
   console.log('Unwrapped:', result);
 } catch (e) {
   console.error('Failed to unwrap:', e.message);
@@ -195,7 +196,7 @@ Enable debug logging to monitor function execution and troubleshoot issues.
 // Enable debug mode
 tryAndCatch.enableDebug();
 
-const [result, error] = tryAndCatch(JSON.parse, '{"test": true}');
+const { result, error } = tryAndCatch(JSON.parse, '{"test": true}');
 // Output: [try-and-catch] Executing function: JSON.parse
 //         [try-and-catch] ✅ Function JSON.parse executed successfully
 
@@ -213,7 +214,7 @@ tryAndCatch.enableDebug({
   prefix: '[MY-APP]'
 });
 
-const [data, err] = tryAndCatch(Math.max, 1, 2, 3);
+const { result: data, error: err } = tryAndCatch(Math.max, 1, 2, 3);
 // Output: [MY-APP] Executing function: max
 //         [MY-APP] Arguments: [1, 2, 3]
 //         [MY-APP] ✅ Function max executed successfully
@@ -226,16 +227,16 @@ This package is written in TypeScript and provides full type safety:
 
 ```typescript
 // TypeScript will infer the correct types
-const [result, error] = tryAndCatch(JSON.parse, '{"test": true}');
+const { result, error } = tryAndCatch(JSON.parse, '{"test": true}');
 // result: any (JSON.parse return type)
 // error: Error | null
 
-const [addResult, addError] = tryAndCatch((a: number, b: number) => a + b, 1, 2);
+const { result: addResult, error: addError } = tryAndCatch((a: number, b: number) => a + b, 1, 2);
 // addResult: number
 // addError: Error | null
 
 // Block execution with type inference
-const [blockResult, blockError] = tryAndCatch.block(() => {
+const { result: blockResult, error: blockError } = tryAndCatch.block(() => {
   return { message: 'Hello', count: 42 };
 });
 // blockResult: { message: string; count: number; }
