@@ -1,17 +1,16 @@
 /**
- * A utility function that wraps try-catch logic and returns a tuple with result and error.
+ * A utility function that wraps try-catch logic and returns an object with result and error.
  * Inspired by Go's error handling pattern and Rust's Result type.
  *
  * @template TFunc - The type of the function being wrapped
  * @param fn - The function to execute safely
  * @param args - Arguments to pass to the function
- * @returns A tuple where the first element is the result (or undefined on error)
- *          and the second is the error (or null on success)
+ * @returns An object with result and error properties
  *
  * @example
  * ```typescript
  * // Success case - destructure with meaningful names
- * const [user, userError] = tryAndCatch(JSON.parse, '{"name": "John", "age": 30}');
+ * const { result: user, error: userError } = tryAndCatch(JSON.parse, '{"name": "John", "age": 30}');
  * if (userError) {
  *   console.error('Failed to parse user:', userError.message);
  *   return;
@@ -19,16 +18,16 @@
  * console.log('User loaded:', user.name);
  *
  * // Error case - handle gracefully
- * const [data, parseError] = tryAndCatch(JSON.parse, 'invalid json');
+ * const { result: data, error: parseError } = tryAndCatch(JSON.parse, 'invalid json');
  * if (parseError) {
  *   console.error('Parse failed:', parseError.message);
  *   // Handle error or provide fallback
  * }
  *
- * // With functions that might throw
- * const [result, calcError] = tryAndCatch(riskyCalculation, a, b, c);
- * if (calcError) {
- *   return handleCalculationError(calcError);
+ * // Simple destructuring
+ * const { result, error } = tryAndCatch(riskyCalculation, a, b, c);
+ * if (error) {
+ *   return handleCalculationError(error);
  * }
  * return result;
  * ```
@@ -39,8 +38,8 @@
  * Error case: function threw an error
  */
 type TryAndCatchResult<TReturn> =
-  | readonly [result: TReturn, error: null]
-  | readonly [result: undefined, error: Error];
+  | { readonly result: TReturn; readonly error: null }
+  | { readonly result: undefined; readonly error: Error };
 
 /**
  * Generic constraint for any callable function
@@ -135,7 +134,7 @@ const tryAndCatch = <TFunc extends AnyFunction>(
       }
     }
 
-    return [result, null] as const;
+    return { result, error: null } as const;
   } catch (error) {
     const errorObject =
       error instanceof Error ? error : new Error(String(error));
@@ -151,7 +150,7 @@ const tryAndCatch = <TFunc extends AnyFunction>(
       }
     }
 
-    return [undefined, errorObject] as const;
+    return { result: undefined, error: errorObject } as const;
   }
 };
 
@@ -160,8 +159,8 @@ const tryAndCatch = <TFunc extends AnyFunction>(
  */
 tryAndCatch.isOk = <T>(
   result: TryAndCatchResult<T>
-): result is readonly [T, null] => {
-  return result[1] === null;
+): result is { readonly result: T; readonly error: null } => {
+  return result.error === null;
 };
 
 /**
@@ -169,8 +168,8 @@ tryAndCatch.isOk = <T>(
  */
 tryAndCatch.isError = <T>(
   result: TryAndCatchResult<T>
-): result is readonly [undefined, Error] => {
-  return result[1] !== null;
+): result is { readonly result: undefined; readonly error: Error } => {
+  return result.error !== null;
 };
 
 /**
@@ -178,9 +177,9 @@ tryAndCatch.isError = <T>(
  */
 tryAndCatch.unwrap = <T>(result: TryAndCatchResult<T>): T => {
   if (tryAndCatch.isError(result)) {
-    throw result[1];
+    throw result.error;
   }
-  return result[0];
+  return result.result;
 };
 
 /**
@@ -190,7 +189,7 @@ tryAndCatch.unwrapOr = <T>(
   result: TryAndCatchResult<T>,
   defaultValue: T
 ): T => {
-  return tryAndCatch.isOk(result) ? result[0] : defaultValue;
+  return tryAndCatch.isOk(result) ? result.result : defaultValue;
 };
 
 /**
@@ -203,18 +202,18 @@ tryAndCatch.block = <T>(codeBlock: () => T): TryAndCatchResult<T> => {
 
 /**
  * Execute an async block of code safely
- * Returns a Promise that resolves to the result tuple
+ * Returns a Promise that resolves to the result object
  */
 tryAndCatch.asyncBlock = async <T>(
   codeBlock: () => Promise<T>
 ): Promise<TryAndCatchResult<T>> => {
   try {
     const result = await codeBlock();
-    return [result, null] as const;
+    return { result, error: null } as const;
   } catch (error) {
     const errorObject =
       error instanceof Error ? error : new Error(String(error));
-    return [undefined, errorObject] as const;
+    return { result: undefined, error: errorObject } as const;
   }
 };
 

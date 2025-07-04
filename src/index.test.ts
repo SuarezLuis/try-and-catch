@@ -1,20 +1,20 @@
 import tryAndCatch from "./index";
 
 describe("tryAndCatch", () => {
-  it("should return [result, null] when function executes successfully", () => {
+  it("should return {result, error: null} when function executes successfully", () => {
     const add = (a: number, b: number) => a + b;
-    const [result, error] = tryAndCatch(add, 2, 3);
+    const { result, error } = tryAndCatch(add, 2, 3);
 
     expect(result).toBe(5);
     expect(error).toBeNull();
   });
 
-  it("should return [undefined, error] when function throws an error", () => {
+  it("should return {result: undefined, error} when function throws an error", () => {
     const throwError = () => {
       throw new Error("Test error");
     };
 
-    const [result, error] = tryAndCatch(throwError);
+    const { result, error } = tryAndCatch(throwError);
 
     expect(result).toBeUndefined();
     expect(error).toBeInstanceOf(Error);
@@ -23,7 +23,7 @@ describe("tryAndCatch", () => {
 
   it("should handle JSON.parse successfully", () => {
     const validJson = '{"name": "test", "value": 42}';
-    const [result, error] = tryAndCatch(JSON.parse, validJson);
+    const { result, error } = tryAndCatch(JSON.parse, validJson);
 
     expect(result).toEqual({ name: "test", value: 42 });
     expect(error).toBeNull();
@@ -31,7 +31,7 @@ describe("tryAndCatch", () => {
 
   it("should handle JSON.parse error", () => {
     const invalidJson = "invalid json";
-    const [result, error] = tryAndCatch(JSON.parse, invalidJson);
+    const { result, error } = tryAndCatch(JSON.parse, invalidJson);
 
     expect(result).toBeUndefined();
     expect(error).toBeInstanceOf(Error);
@@ -39,7 +39,7 @@ describe("tryAndCatch", () => {
 
   it("should handle functions with multiple arguments", () => {
     const multiply = (a: number, b: number, c: number) => a * b * c;
-    const [result, error] = tryAndCatch(multiply, 2, 3, 4);
+    const { result, error } = tryAndCatch(multiply, 2, 3, 4);
 
     expect(result).toBe(24);
     expect(error).toBeNull();
@@ -47,7 +47,7 @@ describe("tryAndCatch", () => {
 
   it("should handle functions with no arguments", () => {
     const getCurrentTime = () => Date.now();
-    const [result, error] = tryAndCatch(getCurrentTime);
+    const { result, error } = tryAndCatch(getCurrentTime);
 
     expect(typeof result).toBe("number");
     expect(error).toBeNull();
@@ -58,7 +58,7 @@ describe("tryAndCatch", () => {
       throw "String error";
     };
 
-    const [result, error] = tryAndCatch(throwString);
+    const { result, error } = tryAndCatch(throwString);
 
     expect(result).toBeUndefined();
     expect(error).toBeInstanceOf(Error);
@@ -70,7 +70,7 @@ describe("tryAndCatch", () => {
       return "async result";
     };
 
-    const [result, error] = tryAndCatch(asyncResolve);
+    const { result, error } = tryAndCatch(asyncResolve);
 
     expect(result).toBeInstanceOf(Promise);
     expect(error).toBeNull();
@@ -234,7 +234,7 @@ describe("tryAndCatch", () => {
 
   describe("Block execution", () => {
     it("should execute code blocks successfully with tryAndCatch.block", () => {
-      const [result, error] = tryAndCatch.block(() => {
+      const { result, error } = tryAndCatch.block(() => {
         const data = { x: 10, y: 20 };
         return data.x + data.y;
       });
@@ -244,7 +244,7 @@ describe("tryAndCatch", () => {
     });
 
     it("should handle errors in code blocks with tryAndCatch.block", () => {
-      const [result, error] = tryAndCatch.block(() => {
+      const { result, error } = tryAndCatch.block(() => {
         throw new Error("Block error");
       });
 
@@ -254,7 +254,7 @@ describe("tryAndCatch", () => {
     });
 
     it("should execute async code blocks successfully with tryAndCatch.asyncBlock", async () => {
-      const [result, error] = await tryAndCatch.asyncBlock(async () => {
+      const { result, error } = await tryAndCatch.asyncBlock(async () => {
         return new Promise<string>((resolve) => {
           setTimeout(() => resolve("async result"), 10);
         });
@@ -265,7 +265,7 @@ describe("tryAndCatch", () => {
     });
 
     it("should handle errors in async code blocks with tryAndCatch.asyncBlock", async () => {
-      const [result, error] = await tryAndCatch.asyncBlock(async () => {
+      const { result, error } = await tryAndCatch.asyncBlock(async () => {
         throw new Error("Async block error");
       });
 
@@ -275,7 +275,7 @@ describe("tryAndCatch", () => {
     });
 
     it("should handle rejected promises in tryAndCatch.asyncBlock", async () => {
-      const [result, error] = await tryAndCatch.asyncBlock(async () => {
+      const { result, error } = await tryAndCatch.asyncBlock(async () => {
         return Promise.reject(new Error("Promise rejected"));
       });
 
