@@ -42,6 +42,11 @@ type TryAndCatchResult<TReturn> =
   | { readonly result: undefined; readonly error: Error };
 
 /**
+ * Async version of TryAndCatchResult wrapped in a Promise
+ */
+type AsyncTryAndCatchResult<TReturn> = Promise<TryAndCatchResult<TReturn>>;
+
+/**
  * Generic constraint for any callable function
  */
 type AnyFunction = (...args: any[]) => any;
@@ -97,12 +102,20 @@ const debugLog = {
 };
 
 /**
- * Safely executes a function and returns a result object instead of throwing
+ * Type guard to check if a value is a Promise
+ */
+const isPromise = (value: any): value is Promise<any> => {
+  return value && typeof value.then === 'function';
+};
+
+/**
+ * Safely executes a function and returns a result object instead of throwing.
+ * Automatically handles both sync and async functions.
  */
 const tryAndCatch = <TFunc extends AnyFunction>(
   fn: TFunc,
   ...args: Parameters<TFunc>
-): TryAndCatchResult<ReturnType<TFunc>> => {
+): any => {
   const functionName = fn.name || "anonymous";
   // For built-in functions, try to get a better name
   const displayName =
@@ -123,6 +136,42 @@ const tryAndCatch = <TFunc extends AnyFunction>(
   try {
     const result = fn(...args);
 
+    // If the result is a Promise, handle it asynchronously
+    if (isPromise(result)) {
+      return result
+        .then((asyncResult) => {
+          if (debugConfig.enabled) {
+            const endTime = debugConfig.logTiming ? Date.now() : 0;
+            debugLog.success(`Function ${displayName} executed successfully`);
+            if (debugConfig.logTiming) {
+              debugLog.timing(
+                `Function ${displayName} completed`,
+                endTime - startTime
+              );
+            }
+          }
+          return { result: asyncResult, error: null } as const;
+        })
+        .catch((error) => {
+          const errorObject =
+            error instanceof Error ? error : new Error(String(error));
+
+          if (debugConfig.enabled) {
+            const endTime = debugConfig.logTiming ? Date.now() : 0;
+            debugLog.error(
+              `Function ${displayName} threw an error:`,
+              errorObject.message
+            );
+            if (debugConfig.logTiming) {
+              debugLog.timing(`Function ${displayName} failed`, endTime - startTime);
+            }
+          }
+
+          return { result: undefined, error: errorObject } as const;
+        });
+    }
+
+    // Handle synchronous result
     if (debugConfig.enabled) {
       const endTime = debugConfig.logTiming ? Date.now() : 0;
       debugLog.success(`Function ${displayName} executed successfully`);
@@ -152,7 +201,7 @@ const tryAndCatch = <TFunc extends AnyFunction>(
 
     return { result: undefined, error: errorObject } as const;
   }
-};
+}
 
 /**
  * Helper function to check if a result is successful (no error)
@@ -236,7 +285,7 @@ tryAndCatch.unwrapOr = <T>(
  * Execute a block of code safely without needing to wrap in a function
  * This is syntactic sugar for tryAndCatch(() => { code })
  * @param codeBlock - The code block to execute
- * @returns Result object with result and error properties
+ * @returns Result object with result and error properties (or Promise if async)
  * @example
  * ```typescript
  * const { result, error } = tryAndCatch.block(() => {
@@ -245,7 +294,7 @@ tryAndCatch.unwrapOr = <T>(
  * });
  * ```
  */
-tryAndCatch.block = <T>(codeBlock: () => T): TryAndCatchResult<T> => {
+tryAndCatch.block = <T>(codeBlock: () => T): any => {
   return tryAndCatch(codeBlock);
 };
 
@@ -283,7 +332,7 @@ tryAndCatch.asyncBlock = async <T>(
  * ```typescript
  * // Enable basic debug
  * tryAndCatch.enableDebug();
- * 
+ *
  * // Enable with custom configuration
  * tryAndCatch.enableDebug({
  *   logTiming: true,

@@ -65,18 +65,29 @@ describe("tryAndCatch", () => {
     expect(error?.message).toBe("String error");
   });
 
-  it("should handle async functions that return promises", () => {
+  it("should handle async functions automatically", async () => {
     const asyncResolve = async () => {
+      await new Promise(resolve => setTimeout(resolve, 10));
       return "async result";
     };
 
-    const { result, error } = tryAndCatch(asyncResolve);
+    const { result, error } = await tryAndCatch(asyncResolve);
 
-    expect(result).toBeInstanceOf(Promise);
+    expect(result).toBe("async result");
     expect(error).toBeNull();
+  });
 
-    // Test the promise resolves correctly
-    return expect(result).resolves.toBe("async result");
+  it("should handle async functions that throw errors", async () => {
+    const asyncThrow = async () => {
+      await new Promise(resolve => setTimeout(resolve, 10));
+      throw new Error("async error");
+    };
+
+    const { result, error } = await tryAndCatch(asyncThrow);
+
+    expect(result).toBeUndefined();
+    expect(error).toBeInstanceOf(Error);
+    expect(error?.message).toBe("async error");
   });
 
   describe("Helper functions", () => {

@@ -26,6 +26,12 @@ const { result: parseResult, error: parseError } = tryAndCatch(JSON.parse, 'inva
 if (parseError) {
   console.error('Parsing failed:', parseError); // SyntaxError: Unexpected token i in JSON at position 0
 }
+
+// Async functions - automatically handled
+const { result: apiData, error: apiError } = await tryAndCatch(async () => {
+  const response = await fetch('/api/data');
+  return await response.json();
+});
 ```
 
 ## Core API
@@ -292,6 +298,46 @@ Updates debug configuration while debug mode is enabled.
 
 #### `tryAndCatch.getDebugConfig(): DebugConfig`
 Returns the current debug configuration.
+
+## Automatic Promise Handling
+
+The function automatically detects and handles promises, awaiting them for you:
+
+```typescript
+// Async function - automatically awaited
+const { result, error } = await tryAndCatch(async () => {
+  const response = await fetch('/api/data');
+  return await response.json();
+});
+
+if (error) {
+  console.error('API call failed:', error.message);
+} else {
+  console.log('API response:', result);
+}
+
+// Promise-returning function - also handled automatically
+const { result, error } = await tryAndCatch(fetch, '/api/data');
+if (error) {
+  console.error('Fetch failed:', error.message);
+} else {
+  console.log('Response received:', result);
+}
+```
+
+## Changelog
+
+### v2.1.0 (Latest)
+- **✨ NEW**: Automatic promise handling - async functions are now automatically awaited
+- **🔧 IMPROVED**: Enhanced TypeScript support for async operations
+- **📚 DOCS**: Updated examples to showcase automatic async handling
+
+### v2.0.0
+- **💥 BREAKING**: Changed API from tuple `[result, error]` to object `{result, error}`
+- **✨ NEW**: Added helper methods: `isOk`, `isError`, `unwrap`, `unwrapOr`
+- **✨ NEW**: Added debug mode with configurable logging
+- **✨ NEW**: Added block execution methods: `block()` and `asyncBlock()`
+- **📚 DOCS**: Complete rewrite of documentation with comprehensive examples
 
 ## License
 

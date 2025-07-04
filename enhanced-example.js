@@ -34,11 +34,11 @@ const riskyResult = tryAndCatch(() => {
 const valueWithFallback = tryAndCatch.unwrapOr(riskyResult, 'default value');
 console.log('Value with fallback:', valueWithFallback);
 
-// Example 5: Async operation with helpers
-console.log('\nExample 5: Async operation with helpers');
+// Example 5: Automatic async handling
+console.log('\nExample 5: Automatic async handling');
 async function asyncExample() {
+    // Async function - automatically awaited
     const { result, error } = await tryAndCatch(async () => {
-        // Simulate async work
         await new Promise(resolve => setTimeout(resolve, 100));
         return 'async success';
     });
@@ -48,8 +48,28 @@ async function asyncExample() {
     } else {
         console.log('Async result:', result);
     }
+}
+
+// Example 6: Promise-returning function
+console.log('\nExample 6: Promise-returning function');
+async function promiseExample() {
+    const simulateApiCall = () => {
+        return new Promise((resolve) => {
+            setTimeout(() => resolve({ data: 'api response' }), 50);
+        });
+    };
+    
+    const { result, error } = await tryAndCatch(simulateApiCall);
+    
+    if (error) {
+        console.log('Promise error:', error.message);
+    } else {
+        console.log('Promise result:', result);
+    }
     
     console.log('\n=== Enhanced Example Complete ===');
 }
 
-asyncExample();
+asyncExample()
+    .then(() => promiseExample())
+    .catch(console.error);

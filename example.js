@@ -2,7 +2,10 @@ const tryAndCatch = require("./dist/index.js");
 
 // Example 1: JSON parsing
 console.log("Example 1: JSON parsing");
-const { result: parseResult, error: parseError } = tryAndCatch(JSON.parse, '{"name": "test"}');
+const { result: parseResult, error: parseError } = tryAndCatch(
+  JSON.parse,
+  '{"name": "test"}'
+);
 if (parseError) {
   console.error("Parse error:", parseError.message);
 } else {
@@ -11,7 +14,10 @@ if (parseError) {
 
 // Example 2: JSON parsing with invalid input
 console.log("\nExample 2: JSON parsing with invalid input");
-const { result: parseResult2, error: parseError2 } = tryAndCatch(JSON.parse, "invalid json");
+const { result: parseResult2, error: parseError2 } = tryAndCatch(
+  JSON.parse,
+  "invalid json"
+);
 if (parseError2) {
   console.error("Parse error:", parseError2.message);
 } else {
