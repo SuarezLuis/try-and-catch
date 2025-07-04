@@ -97,7 +97,7 @@ const debugLog = {
 };
 
 /**
- * Safely executes a function and returns a result tuple instead of throwing
+ * Safely executes a function and returns a result object instead of throwing
  */
 const tryAndCatch = <TFunc extends AnyFunction>(
   fn: TFunc,
@@ -156,6 +156,15 @@ const tryAndCatch = <TFunc extends AnyFunction>(
 
 /**
  * Helper function to check if a result is successful (no error)
+ * @param result - The result object from tryAndCatch
+ * @returns True if the operation was successful
+ * @example
+ * ```typescript
+ * const result = tryAndCatch(JSON.parse, '{"valid": true}');
+ * if (tryAndCatch.isOk(result)) {
+ *   console.log('Success:', result.result);
+ * }
+ * ```
  */
 tryAndCatch.isOk = <T>(
   result: TryAndCatchResult<T>
@@ -165,6 +174,15 @@ tryAndCatch.isOk = <T>(
 
 /**
  * Helper function to check if a result is an error
+ * @param result - The result object from tryAndCatch
+ * @returns True if the operation failed
+ * @example
+ * ```typescript
+ * const result = tryAndCatch(JSON.parse, 'invalid');
+ * if (tryAndCatch.isError(result)) {
+ *   console.error('Failed:', result.error.message);
+ * }
+ * ```
  */
 tryAndCatch.isError = <T>(
   result: TryAndCatchResult<T>
@@ -174,6 +192,19 @@ tryAndCatch.isError = <T>(
 
 /**
  * Helper function to get the result value or throw if there's an error
+ * @param result - The result object from tryAndCatch
+ * @returns The result value if successful
+ * @throws The error if the operation failed
+ * @example
+ * ```typescript
+ * const result = tryAndCatch(JSON.parse, '{"data": "value"}');
+ * try {
+ *   const data = tryAndCatch.unwrap(result);
+ *   console.log('Data:', data);
+ * } catch (error) {
+ *   console.error('Failed to unwrap:', error.message);
+ * }
+ * ```
  */
 tryAndCatch.unwrap = <T>(result: TryAndCatchResult<T>): T => {
   if (tryAndCatch.isError(result)) {
@@ -184,6 +215,15 @@ tryAndCatch.unwrap = <T>(result: TryAndCatchResult<T>): T => {
 
 /**
  * Helper function to get the result value or return a default value
+ * @param result - The result object from tryAndCatch
+ * @param defaultValue - The value to return if the operation failed
+ * @returns The result value if successful, otherwise the default value
+ * @example
+ * ```typescript
+ * const result = tryAndCatch(JSON.parse, 'invalid');
+ * const data = tryAndCatch.unwrapOr(result, { fallback: true });
+ * console.log('Data:', data); // { fallback: true }
+ * ```
  */
 tryAndCatch.unwrapOr = <T>(
   result: TryAndCatchResult<T>,
@@ -195,6 +235,15 @@ tryAndCatch.unwrapOr = <T>(
 /**
  * Execute a block of code safely without needing to wrap in a function
  * This is syntactic sugar for tryAndCatch(() => { code })
+ * @param codeBlock - The code block to execute
+ * @returns Result object with result and error properties
+ * @example
+ * ```typescript
+ * const { result, error } = tryAndCatch.block(() => {
+ *   const data = JSON.parse(jsonString);
+ *   return data.processed;
+ * });
+ * ```
  */
 tryAndCatch.block = <T>(codeBlock: () => T): TryAndCatchResult<T> => {
   return tryAndCatch(codeBlock);
@@ -203,6 +252,16 @@ tryAndCatch.block = <T>(codeBlock: () => T): TryAndCatchResult<T> => {
 /**
  * Execute an async block of code safely
  * Returns a Promise that resolves to the result object
+ * @param codeBlock - The async code block to execute
+ * @returns Promise that resolves to result object with result and error properties
+ * @example
+ * ```typescript
+ * const { result, error } = await tryAndCatch.asyncBlock(async () => {
+ *   const response = await fetch('/api/data');
+ *   const data = await response.json();
+ *   return data.processed;
+ * });
+ * ```
  */
 tryAndCatch.asyncBlock = async <T>(
   codeBlock: () => Promise<T>
@@ -219,6 +278,19 @@ tryAndCatch.asyncBlock = async <T>(
 
 /**
  * Enable debug mode with optional configuration
+ * @param config - Optional debug configuration
+ * @example
+ * ```typescript
+ * // Enable basic debug
+ * tryAndCatch.enableDebug();
+ * 
+ * // Enable with custom configuration
+ * tryAndCatch.enableDebug({
+ *   logTiming: true,
+ *   logArgs: true,
+ *   prefix: '[MY-APP]'
+ * });
+ * ```
  */
 tryAndCatch.enableDebug = (config: Partial<DebugConfig> = {}) => {
   debugConfig = {
@@ -242,6 +314,12 @@ tryAndCatch.disableDebug = () => {
 
 /**
  * Get current debug configuration
+ * @returns Current debug configuration object
+ * @example
+ * ```typescript
+ * const config = tryAndCatch.getDebugConfig();
+ * console.log('Debug enabled:', config.enabled);
+ * ```
  */
 tryAndCatch.getDebugConfig = (): DebugConfig => {
   return { ...debugConfig };
@@ -249,6 +327,12 @@ tryAndCatch.getDebugConfig = (): DebugConfig => {
 
 /**
  * Configure specific debug options
+ * @param config - Partial debug configuration to update
+ * @example
+ * ```typescript
+ * tryAndCatch.enableDebug();
+ * tryAndCatch.configureDebug({ logTiming: true, prefix: '[CUSTOM]' });
+ * ```
  */
 tryAndCatch.configureDebug = (config: Partial<DebugConfig>) => {
   if (!debugConfig.enabled) {
