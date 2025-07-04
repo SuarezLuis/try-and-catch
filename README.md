@@ -11,17 +11,9 @@ npm install try-and-catch
 ## Quick Start
 
 ```typescript
-import tryAndCatch from 'try-and-catch';## Changelog
+import tryAndCatch from 'try-and-catch';
 
-### v2.0.0 (Latest)
-- **💥 BREAKING**: Changed API from tuple `[result, error]` to object `{result, error}`
-- **✨ NEW**: Automatic promise handling - async functions are now automatically awaited
-- **✨ NEW**: Added helper methods: `isOk`, `isError`, `unwrap`, `unwrapOr`
-- **✨ NEW**: Added debug mode with configurable logging
-- **✨ NEW**: Added block execution method: `block()` (supports both sync and async)
-- **🗑️ REMOVED**: `asyncBlock()` method (redundant due to automatic promise handling)
-- **🔧 IMPROVED**: Enhanced TypeScript support for async operations
-- **📚 DOCS**: Complete rewrite of documentation with comprehensive examplesase
+// Success case
 const { result, error } = tryAndCatch(JSON.parse, '{"valid": "json"}');
 if (error) {
   console.error('Parsing failed:', error);
@@ -332,13 +324,7 @@ if (error) {
 
 ## Changelog
 
-### v2.1.0 (Latest)
-- **✨ NEW**: Automatic promise handling - async functions are now automatically awaited
-- **�️ REMOVED**: `asyncBlock()` method (redundant due to automatic promise handling)
-- **�🔧 IMPROVED**: Enhanced TypeScript support for async operations  
-- **📚 DOCS**: Updated examples to showcase automatic async handling
-
-### v2.0.0
+### v2.0.0 (Latest)
 - **💥 BREAKING**: Changed API from tuple `[result, error]` to object `{result, error}`
 - **✨ NEW**: Added automatic promise handling for async functions
 - **✨ NEW**: Added helper methods: `isOk`, `isError`, `unwrap`, `unwrapOr`
