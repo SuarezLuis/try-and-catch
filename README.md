@@ -1,18 +1,8 @@
 # 🛡️ try-and-catch
 
-**Enterprise-grade TypeScript error handling with ALL limitations solved### 🧠 **Intelligent Error Handling**
-Preserves error context and stack traces. Clean error objects without circular references.
+**Enterprise-grade TypeScript error handling with ALL limitations solved in v6.0.2.**
 
-### 🔄 **Smart Retry Logic**
-Built-in strategies for network calls, database operations, and custom scenarios with exponential backoff and jitter.
-
-### 🛡️ **Resource Safety**
-Cleanup callbacks are isolated and protected. When cleanup fails, your main operation result is preserved.
-
-### ⚡ **Performance Control**
-Per-attempt timeouts and execution time tracking for performance management.**
-
-[![npm version](https://badge.fury.io/js/try-and-catch.svg)](https://www.npmjs.com/package/try-and-catch)
+[![npm version](https://img.shields.io/npm/v/try-and-catch.svg)](https://www.npmjs.com/package/try-and-catch)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-green.svg)](https://www.npmjs.com/package/try-and-catch)
 [![Tests](https://img.shields.io/badge/Tests-50%20Passing-brightgreen.svg)](#)
@@ -35,7 +25,7 @@ Transform your error handling from fragile code to enterprise-grade reliability.
 - 🚀 **Simple APIs with advanced capabilities when needed**
 
 **💎 CONCLUSION:**
-*try-and-catch v6.0.0 is the ULTIMATE error handling solution.
+*try-and-catch v6.0.2 is the ULTIMATE error handling solution.
 Performance-optimized, thoroughly tested, and production-ready.
 It has evolved from utility to enterprise framework while
 maintaining simplicity. ALL limitations have been addressed
@@ -393,9 +383,9 @@ npm install try-and-catch
 
 **Join thousands of developers who've made the switch to bulletproof error handling.**
 
-## 🔬 Deep Validation Report (v6.0.0)
+## 🔬 Deep Validation Report (v6.0.2)
 
-### === FINAL v6.0.0 VALIDATION: Deep Testing ===
+### === FINAL v6.0.2 VALIDATION: Deep Testing ===
 
 **Performance Deep Dive**
 ```
@@ -478,7 +468,14 @@ Performance: 1.5x overhead vs raw try-catch
 
 ## 📋 Release History
 
-### 🚀 v6.0.0 (2025-07-11) - PRODUCTION RELEASE
+### � v6.0.2 (2025-07-11) - DOCUMENTATION UPDATE
+
+- **FIXED**: README formatting issues and header corruption
+- **UPDATED**: Badge service to shields.io for better reliability  
+- **MAINTAINED**: All v6.0.0 functionality unchanged
+- **VERIFIED**: npm publication and version consistency
+
+### �🚀 v6.0.0 (2025-07-11) - PRODUCTION RELEASE
 
 **Major cleanup and test suite stabilization for production readiness:**
 
