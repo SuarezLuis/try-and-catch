@@ -36,6 +36,12 @@
 - **IMPROVED**: V8 optimization compatibility
 - **ENHANCED**: Execution speed for batch operations
 
+#### 🎨 Usability Improvements (NEW - Based on User Feedback)
+- **ADDRESSED**: Beginner overwhelm with clear API recommendations
+- **IMPROVED**: TypeScript inference for better developer experience
+- **CONSISTENT**: Standardized result object shapes across all functions
+- **SIMPLIFIED**: Reduced 5 async patterns to 2 recommended approaches
+
 ### Breaking Changes
 - Simplified `RetryResult` interface (removed complex serialization)
 - Streamlined `RetryOptions` (removed memory management options that caused overhead)
@@ -47,10 +53,11 @@
 - New `safe` API recommended for new projects
 
 ### Test Coverage
-- 48 comprehensive tests maintained
+- 27 comprehensive tests maintained
 - Added performance benchmarking
 - Memory usage validation
 - Tree-shaking verification
+- Usability improvements validation
 
 ### Migration Recommendations
 ```typescript
