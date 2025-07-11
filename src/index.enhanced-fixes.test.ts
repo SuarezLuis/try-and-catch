@@ -11,7 +11,7 @@ import {
   SerializableError,
 } from "./index";
 
-describe("Enhanced tryAndCatch v4.1.0 - Limitation Fixes", () => {
+describe("Enhanced tryAndCatch v5.0.0 - Limitation Fixes", () => {
   // Clean up any pending timers after each test to prevent leaks
   afterEach(async () => {
     // Allow any pending microtasks to complete

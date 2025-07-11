@@ -25,7 +25,7 @@ Transform your error handling from fragile code to enterprise-grade reliability.
 - 🚀 **Simple APIs with advanced capabilities when needed**
 
 **💎 CONCLUSION:**
-*try-and-catch v4.1.1 is the ULTIMATE error handling solution.
+*try-and-catch v5.0.0 is the ULTIMATE error handling solution.
 It has evolved from utility to enterprise framework while
 maintaining simplicity. ALL limitations have been addressed
 with elegant, well-designed solutions. This is the future
