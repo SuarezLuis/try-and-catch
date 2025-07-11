@@ -1,7 +1,7 @@
 {
   "name": "try-and-catch",
-  "version": "2.0.2",
-  "description": "A utility function that wraps try-catch logic and returns an object with result and error properties",
+  "version": "3.0.0",
+  "description": "A minimal TypeScript utility for safe try-catch execution with {result, error} return pattern, supporting both sync and async functions with optional finally callbacks",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -35,10 +35,6 @@
     "build": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",
-    "example": "node example.js",
-    "example:enhanced": "node enhanced-example.js",
-    "example:debug": "node debug-example.js",
-    "example:blocks": "node block-example.js",
     "prepublishOnly": "npm run test && npm run build"
   },
   "keywords": [
@@ -48,13 +44,10 @@
     "handling",
     "utility",
     "typescript",
-    "functional",
+    "async",
+    "sync",
     "safe",
-    "result",
-    "either",
-    "monad",
-    "object",
-    "destructuring"
+    "result"
   ],
   "author": "Luis Suarez <suarezluis@gmail.com>",
   "license": "MIT",
