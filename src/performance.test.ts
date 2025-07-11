@@ -1,8 +1,4 @@
-import {
-  tryAndCatch,
-  safe,
-  withRetry,
-} from "./index";
+import { tryAndCatch, safe, withRetry } from "./index";
 
 describe("Performance Optimization Tests", () => {
   test("Performance comparison - sync operations", () => {
@@ -31,7 +27,9 @@ describe("Performance Optimization Tests", () => {
     const optimizedEnd = process.hrtime.bigint();
     const optimizedTime = Number(optimizedEnd - optimizedStart) / 1000000;
 
-    console.log(`Optimized library (${iterations}x): ${optimizedTime.toFixed(2)}ms`);
+    console.log(
+      `Optimized library (${iterations}x): ${optimizedTime.toFixed(2)}ms`
+    );
 
     // Test baseline comparison (simulate additional overhead)
     const baselineStart = process.hrtime.bigint();
@@ -43,10 +41,12 @@ describe("Performance Optimization Tests", () => {
     const baselineEnd = process.hrtime.bigint();
     const baselineTime = Number(baselineEnd - baselineStart) / 1000000;
 
-    console.log(`Baseline with overhead (${iterations}x): ${baselineTime.toFixed(2)}ms`);
+    console.log(
+      `Baseline with overhead (${iterations}x): ${baselineTime.toFixed(2)}ms`
+    );
 
-    const optimizedOverhead = ((optimizedTime / rawTime) - 1) * 100;
-    const baselineOverhead = ((baselineTime / rawTime) - 1) * 100;
+    const optimizedOverhead = (optimizedTime / rawTime - 1) * 100;
+    const baselineOverhead = (baselineTime / rawTime - 1) * 100;
 
     console.log(`Optimized overhead: ${optimizedOverhead.toFixed(1)}%`);
     console.log(`Baseline overhead: ${baselineOverhead.toFixed(1)}%`);
@@ -73,7 +73,9 @@ describe("Performance Optimization Tests", () => {
     const finalMemory = process.memoryUsage().heapUsed;
     const memoryIncrease = (finalMemory - initialMemory) / 1024; // KB
 
-    console.log(`Memory increase after 1000 operations: ${memoryIncrease.toFixed(2)}KB`);
+    console.log(
+      `Memory increase after 1000 operations: ${memoryIncrease.toFixed(2)}KB`
+    );
 
     // Memory should not increase significantly
     expect(memoryIncrease).toBeLessThan(2000); // Less than 2MB increase (relaxed)
@@ -102,7 +104,7 @@ describe("Performance Optimization Tests", () => {
 
   test("Async operations", async () => {
     const asyncResult = await tryAndCatch(async () => {
-      await new Promise(resolve => setTimeout(resolve, 1));
+      await new Promise((resolve) => setTimeout(resolve, 1));
       return "async result";
     });
     expect(asyncResult.result).toBe("async result");
@@ -112,17 +114,21 @@ describe("Performance Optimization Tests", () => {
   test("withRetry performance", async () => {
     let attempts = 0;
     const start = Date.now();
-    
-    const result = await withRetry(async () => {
-      attempts++;
-      if (attempts < 3) {
-        throw new Error("Temporary failure");
-      }
-      return "success";
-    }, 3, 10); // 3 retries, 10ms delay
-    
+
+    const result = await withRetry(
+      async () => {
+        attempts++;
+        if (attempts < 3) {
+          throw new Error("Temporary failure");
+        }
+        return "success";
+      },
+      3,
+      10
+    ); // 3 retries, 10ms delay
+
     const duration = Date.now() - start;
-    
+
     expect(result).toBe("success");
     expect(attempts).toBe(3);
     expect(duration).toBeGreaterThan(15); // Should have some delay
@@ -132,12 +138,12 @@ describe("Performance Optimization Tests", () => {
   test("High-frequency operations", () => {
     const iterations = 1000;
     const start = performance.now();
-    
+
     for (let i = 0; i < iterations; i++) {
       const result = safe(() => i * 2);
       expect(result.result).toBe(i * 2);
     }
-    
+
     const duration = performance.now() - start;
     expect(duration).toBeLessThan(100); // Should be very fast
   });
@@ -146,7 +152,7 @@ describe("Performance Optimization Tests", () => {
     const result = tryAndCatch(() => {
       throw "string error";
     });
-    
+
     expect(result.error).toBeInstanceOf(Error);
     expect(result.error?.message).toBe("string error");
   });
@@ -155,11 +161,11 @@ describe("Performance Optimization Tests", () => {
     const numberResult = tryAndCatch(() => {
       throw 404;
     });
-    
+
     const objectResult = tryAndCatch(() => {
       throw { code: "ERROR", message: "Object error" };
     });
-    
+
     expect(numberResult.error?.message).toBe("404");
     expect(objectResult.error?.message).toBe("[object Object]");
   });
