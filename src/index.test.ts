@@ -311,9 +311,9 @@ describe("RetryStrategies", () => {
     expect(typeof delay0).toBe("number");
     expect(typeof delay1).toBe("number");
     expect(delay0).toBeGreaterThanOrEqual(100); // minimum possible
-    expect(delay0).toBeLessThanOrEqual(1100);   // maximum possible
+    expect(delay0).toBeLessThanOrEqual(1100); // maximum possible
     expect(delay1).toBeGreaterThanOrEqual(200); // minimum: 100 * 2^1 + 0
-    expect(delay1).toBeLessThanOrEqual(1000);   // capped at maxMs
+    expect(delay1).toBeLessThanOrEqual(1000); // capped at maxMs
   });
 
   it("creates linear backoff delays", () => {
