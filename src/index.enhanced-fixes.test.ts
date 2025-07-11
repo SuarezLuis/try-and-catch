@@ -12,6 +12,12 @@ import {
 } from "./index";
 
 describe("Enhanced tryAndCatch v4.1.0 - Limitation Fixes", () => {
+  // Clean up any pending timers after each test to prevent leaks
+  afterEach(async () => {
+    // Allow any pending microtasks to complete
+    await new Promise(resolve => setImmediate(resolve));
+  });
+
   describe("Memory Management", () => {
     it("should limit error history to prevent memory bloat", async () => {
       let attempts = 0;

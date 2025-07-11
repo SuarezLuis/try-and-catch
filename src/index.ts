@@ -294,14 +294,23 @@ export async function tryAndCatchWithRetry<T>(
 
       // Apply timeout if specified (performance optimization)
       if (timeout && timeout > 0) {
+        let timeoutId: NodeJS.Timeout | undefined;
+        
         result = await Promise.race([
-          Promise.resolve(fn()),
-          new Promise<never>((_, reject) =>
-            setTimeout(
+          Promise.resolve(fn()).finally(() => {
+            // Clear timeout when operation completes
+            if (timeoutId) {
+              clearTimeout(timeoutId);
+            }
+          }),
+          new Promise<never>((_, reject) => {
+            timeoutId = setTimeout(
               () => reject(new Error(`Operation timed out after ${timeout}ms`)),
               timeout
-            )
-          ),
+            );
+            // Use unref() to prevent the timer from keeping the process alive
+            timeoutId.unref?.();
+          }),
         ]);
       } else {
         result = fn();
@@ -402,6 +411,8 @@ export async function tryAndCatchWithRetry<T>(
         try {
           await new Promise((resolve, reject) => {
             const timeoutId = setTimeout(resolve, delayMs);
+            // Use unref() to prevent the timer from keeping the process alive
+            timeoutId.unref?.();
 
             // Support abort signal
             const abortListener = () => {
@@ -415,12 +426,14 @@ export async function tryAndCatchWithRetry<T>(
               });
 
               // Clean up listener after delay
-              setTimeout(() => {
+              const cleanupTimeoutId = setTimeout(() => {
                 options.abortSignal?.removeEventListener(
                   "abort",
                   abortListener
                 );
               }, delayMs + 100);
+              // Use unref() for cleanup timer too
+              cleanupTimeoutId.unref?.();
             }
           });
         } catch (abortError) {
