@@ -295,7 +295,7 @@ export async function tryAndCatchWithRetry<T>(
       // Apply timeout if specified (performance optimization)
       if (timeout && timeout > 0) {
         let timeoutId: NodeJS.Timeout | undefined;
-        
+
         result = await Promise.race([
           Promise.resolve(fn()).finally(() => {
             // Clear timeout when operation completes
