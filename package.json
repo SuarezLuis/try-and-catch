@@ -1,6 +1,6 @@
 {
   "name": "try-and-catch",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Enterprise-grade TypeScript error handling with ALL limitations fixed in v4.1.0: memory management, performance optimization, enhanced cleanup, JSON serialization, concurrency protection, and simplified APIs. Zero dependencies, full type safety.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
