@@ -41,6 +41,10 @@
 - **IMPROVED**: TypeScript inference for better developer experience
 - **CONSISTENT**: Standardized result object shapes across all functions
 - **SIMPLIFIED**: Reduced 5 async patterns to 2 recommended approaches
+- **ADDED**: Type guards (`isSuccess`, `isError`) for TypeScript integration
+- **ADDED**: Helper functions (`unwrap`, `unwrapOr`) for safer result handling
+- **ADDED**: Warning system (`warnOnError`) to prevent silent failures
+- **ADDED**: Unified `TryAndCatch` API object to solve choice paralysis
 
 ### Breaking Changes
 - Simplified `RetryResult` interface (removed complex serialization)
@@ -53,11 +57,12 @@
 - New `safe` API recommended for new projects
 
 ### Test Coverage
-- 27 comprehensive tests maintained
+- 36 comprehensive tests maintained
 - Added performance benchmarking
 - Memory usage validation
 - Tree-shaking verification
 - Usability improvements validation
+- TypeScript integration testing
 
 ### Migration Recommendations
 ```typescript

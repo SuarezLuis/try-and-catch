@@ -42,10 +42,30 @@ npm install try-and-catch
 ```
 
 ```typescript
-import { safe, tryAndCatchAsync, withRetry } from 'try-and-catch';
+import { safe, TryAndCatch, isSuccess } from 'try-and-catch';
 
-// RECOMMENDED: Use 'safe' for most cases
+// 🎯 RECOMMENDED: Use 'safe' for most cases (addresses beginner overwhelm)
 const { result, error } = await safe(() => fetch('/api/data'));
+
+// 🔒 TypeScript-safe usage with type guards (addresses TS integration issues)
+const apiResult = await safe(() => fetch('/api/data'));
+if (isSuccess(apiResult)) {
+  // TypeScript knows result is non-null here!
+  console.log(apiResult.result.status);
+}
+
+// 🚨 Warning system (addresses silent failure potential)
+import { warnOnError } from 'try-and-catch';
+const result = warnOnError(await safe(() => riskyOperation()), 'API call');
+
+// 🎯 Unified API object (solves API choice paralysis)
+const { result, error } = await TryAndCatch.safe(() => fetch('/api'));
+const retryResult = await TryAndCatch.retry(() => fetch('/api'), { maxRetries: 3 });
+
+// 🔧 Helper functions for safer unwrapping
+import { unwrap, unwrapOr } from 'try-and-catch';
+const data = unwrapOr(apiResult, 'default'); // Safe default value
+// const data = unwrap(apiResult); // Throws if error (for when you're sure)
 
 // Explicitly async (no linter warnings)
 const { result, error } = await tryAndCatchAsync(async () => fetch('/api/data'));
@@ -401,3 +421,40 @@ npm install try-and-catch
 ```
 
 **Join thousands of developers who've made the switch to bulletproof error handling.**
+
+## 🎯 Addressing User Feedback (v5.0.0 Improvements)
+
+### ✅ **SOLVED: Beginner Overwhelm (5 async methods → 2)**
+- **BEFORE**: tryAndCatch, tryAndCatchAsync, tryAndCatchWithRetry, SimpleRetry.quick, SimpleRetry.network
+- **NOW**: `safe()` as main entry point + `TryAndCatch` unified API object
+- **RESULT**: Clear guidance, reduced choice paralysis
+
+### ✅ **SOLVED: TypeScript Integration Issues**
+```typescript
+// BEFORE: TypeScript couldn't infer non-null result
+const { result, error } = await safe(() => fetch('/api'));
+// result could be null even when error is null ❌
+
+// NOW: Type guards provide type safety
+if (isSuccess(apiResult)) {
+  // TypeScript knows result is non-null! ✅
+  console.log(apiResult.result.status);
+}
+```
+
+### ✅ **SOLVED: Silent Failure Potential**
+```typescript
+// NEW: Warning system alerts you to unhandled errors
+const result = warnOnError(await safe(() => riskyOperation()), 'API call');
+// Logs: [try-and-catch] Error in API call: Connection failed
+```
+
+### ✅ **SOLVED: Inconsistent Result Shapes**
+- **ALL** functions now return consistent `{ result, error }` shape
+- `RetryResult` extends base result consistently
+- No more confusion between different APIs
+
+### ✅ **IMPROVED: Confusing Naming**
+- `safe()` is now the **RECOMMENDED** main entry point
+- `TryAndCatch` unified object provides discoverable API
+- Clear documentation hierarchy

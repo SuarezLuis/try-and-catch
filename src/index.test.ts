@@ -1,10 +1,20 @@
 import {
   tryAndCatch,
+  tryAndCatchAsync,
   tryAndCatchWithRetry,
   ErrorTypes,
   RetryStrategies,
+  SimpleRetry,
+  safe,
+  withRetry,
   Result,
   RetryResult,
+  isSuccess,
+  isError,
+  unwrap,
+  unwrapOr,
+  warnOnError,
+  TryAndCatch,
 } from "./index";
 
 describe("tryAndCatch", () => {
@@ -284,7 +294,7 @@ describe("ErrorTypes utilities", () => {
   it("identifies retryable vs non-retryable errors", () => {
     const networkError = new Error("Connection failed");
     const validationError = new Error("Invalid input format");
-    
+
     expect(ErrorTypes.isRetryable(networkError)).toBe(true);
     expect(ErrorTypes.isRetryable(validationError)).toBe(false);
   });
@@ -297,9 +307,9 @@ describe("RetryStrategies", () => {
     // With base=100, attempt 0: 100 * 2^0 + random(1000) = 100 + (0-1000)
     const delay0 = strategy(0);
     const delay1 = strategy(1);
-    
-    expect(typeof delay0).toBe('number');
-    expect(typeof delay1).toBe('number');
+
+    expect(typeof delay0).toBe("number");
+    expect(typeof delay1).toBe("number");
     expect(delay0).toBeGreaterThanOrEqual(100); // minimum possible
     expect(delay0).toBeLessThanOrEqual(1100);   // maximum possible
     expect(delay1).toBeGreaterThanOrEqual(200); // minimum: 100 * 2^1 + 0
@@ -359,5 +369,81 @@ describe("tryAndCatchAsync", () => {
     );
 
     expect(finallyCalled).toBe(true);
+  });
+});
+
+// Test type guards and helper functions
+describe("Type Guards and Helpers", () => {
+  it("isSuccess should correctly identify successful results", () => {
+    const success = { result: "test", error: null };
+    const failure = { result: null, error: new Error("failed") };
+
+    expect(isSuccess(success)).toBe(true);
+    expect(isSuccess(failure)).toBe(false);
+  });
+
+  it("isError should correctly identify error results", () => {
+    const success = { result: "test", error: null };
+    const failure = { result: null, error: new Error("failed") };
+
+    expect(isError(success)).toBe(false);
+    expect(isError(failure)).toBe(true);
+  });
+
+  it("unwrap should return result when successful", () => {
+    const success = { result: "test", error: null };
+    expect(unwrap(success)).toBe("test");
+  });
+
+  it("unwrap should throw error when failed", () => {
+    const failure = { result: null, error: new Error("failed") };
+    expect(() => unwrap(failure)).toThrow("failed");
+  });
+
+  it("unwrapOr should return result when successful", () => {
+    const success = { result: "test", error: null };
+    expect(unwrapOr(success, "default")).toBe("test");
+  });
+
+  it("unwrapOr should return default when failed", () => {
+    const failure = { result: null, error: new Error("failed") };
+    expect(unwrapOr(failure, "default")).toBe("default");
+  });
+
+  it("warnOnError should warn on errors", () => {
+    const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
+    const failure = { result: null, error: new Error("test error") };
+
+    const result = warnOnError(failure, "test context");
+
+    expect(result).toBe(failure);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "[try-and-catch] Error in test context: test error"
+    );
+
+    consoleSpy.mockRestore();
+  });
+});
+
+// Test unified API object
+describe("TryAndCatch Unified API", () => {
+  it("should provide all expected methods", () => {
+    expect(typeof TryAndCatch.safe).toBe("function");
+    expect(typeof TryAndCatch.async).toBe("function");
+    expect(typeof TryAndCatch.withRetry).toBe("function");
+    expect(typeof TryAndCatch.retry).toBe("function");
+    expect(typeof TryAndCatch.isSuccess).toBe("function");
+    expect(typeof TryAndCatch.isError).toBe("function");
+    expect(typeof TryAndCatch.unwrap).toBe("function");
+    expect(typeof TryAndCatch.unwrapOr).toBe("function");
+    expect(typeof TryAndCatch.warnOnError).toBe("function");
+    expect(typeof TryAndCatch.ErrorTypes).toBe("object");
+    expect(typeof TryAndCatch.RetryStrategies).toBe("object");
+    expect(typeof TryAndCatch.SimpleRetry).toBe("object");
+  });
+
+  it("safe method should work identically to tryAndCatch", () => {
+    const success = TryAndCatch.safe(() => "test");
+    expect(success).toEqual({ result: "test", error: null });
   });
 });

@@ -202,4 +202,67 @@ export const SimpleRetry = {
     withRetry(fn, 5, 3000)
 };
 
+/**
+ * 🎯 UNIFIED API - Addresses all usability concerns
+ * Single object with clear, discoverable methods for beginners
+ * Solves API choice paralysis mentioned in user feedback
+ */
+export const TryAndCatch = {
+  // Main recommended API
+  safe: tryAndCatch,
+  
+  // Explicit async (for linter-friendly usage)
+  async: tryAndCatchAsync,
+  
+  // Retry helpers
+  withRetry,
+  retry: tryAndCatchWithRetry,
+  
+  // Type guards for TypeScript
+  isSuccess,
+  isError,
+  unwrap,
+  unwrapOr,
+  
+  // Warning system
+  warnOnError,
+  
+  // Utilities (tree-shakeable when imported directly)
+  ErrorTypes,
+  RetryStrategies,
+  SimpleRetry
+} as const;
+
+// Type guards for better TypeScript integration
+export function isSuccess<T>(result: Result<T>): result is { result: T; error: null } {
+  return result.error === null;
+}
+
+export function isError<T>(result: Result<T>): result is { result: null; error: Error } {
+  return result.error !== null;
+}
+
+// Safe unwrap functions
+export function unwrap<T>(result: Result<T>): T {
+  if (result.error) {
+    throw result.error;
+  }
+  return result.result!;
+}
+
+export function unwrapOr<T>(result: Result<T>, defaultValue: T): T {
+  return result.error ? defaultValue : result.result!;
+}
+
+// Warning system for better debugging
+export function warnOnError<T>(result: Result<T>, context?: string): Result<T> {
+  if (result.error) {
+    const warning = context 
+      ? `[try-and-catch] Error in ${context}: ${result.error.message}`
+      : `[try-and-catch] Unhandled error: ${result.error.message}`;
+    console.warn(warning);
+  }
+  return result;
+}
+
 export default tryAndCatch;
