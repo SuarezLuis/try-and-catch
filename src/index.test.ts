@@ -336,3 +336,44 @@ describe("RetryStrategies", () => {
     expect(RetryStrategies.onlyRetryableErrors(validationError)).toBe(false);
   });
 });
+
+describe("tryAndCatchAsync", () => {
+  it("should work identically to tryAndCatch for async functions", async () => {
+    const { tryAndCatchAsync } = require("./index");
+
+    const asyncResult = await tryAndCatchAsync(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      return "async success";
+    });
+
+    expect(asyncResult.result).toBe("async success");
+    expect(asyncResult.error).toBeNull();
+  });
+
+  it("should handle async errors properly", async () => {
+    const { tryAndCatchAsync } = require("./index");
+
+    const asyncResult = await tryAndCatchAsync(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      throw new Error("Async error");
+    });
+
+    expect(asyncResult.result).toBeNull();
+    expect(asyncResult.error).toBeInstanceOf(Error);
+    expect(asyncResult.error?.message).toBe("Async error");
+  });
+
+  it("should execute finally callback", async () => {
+    const { tryAndCatchAsync } = require("./index");
+    let finallyCalled = false;
+
+    await tryAndCatchAsync(
+      async () => "success",
+      async () => {
+        finallyCalled = true;
+      }
+    );
+
+    expect(finallyCalled).toBe(true);
+  });
+});

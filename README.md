@@ -5,7 +5,7 @@
 [![npm version](https://badge.fury.io/js/try-and-catch.svg)](https://www.npmjs.com/package/try-and-catch)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-green.svg)](https://www.npmjs.com/package/try-and-catch)
-[![Tests](https://img.shields.io/badge/Tests-45%20Passing-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/Tests-48%20Passing-brightgreen.svg)](#)
 
 Transform your error handling from fragile code to enterprise-grade reliability. This isn't just another try-catch wrapper – it's a complete error management system designed for production applications.
 
@@ -25,7 +25,7 @@ Transform your error handling from fragile code to enterprise-grade reliability.
 - 🚀 **Simple APIs with advanced capabilities when needed**
 
 **💎 CONCLUSION:**
-*try-and-catch v4.1.0 is the ULTIMATE error handling solution.
+*try-and-catch v4.1.1 is the ULTIMATE error handling solution.
 It has evolved from utility to enterprise framework while
 maintaining simplicity. ALL limitations have been addressed
 with elegant, well-designed solutions. This is the future
@@ -38,10 +38,13 @@ npm install try-and-catch
 ```
 
 ```typescript
-import { tryAndCatch, SimpleRetry } from 'try-and-catch';
+import { tryAndCatch, tryAndCatchAsync, SimpleRetry } from 'try-and-catch';
 
-// Simple & safe
+// Simple & safe (sync/async auto-detection)
 const { result, error } = await tryAndCatch(() => fetch('/api/data'));
+
+// Explicitly async (no linter warnings)
+const { result, error } = await tryAndCatchAsync(async () => fetch('/api/data'));
 
 // Smart retries
 const data = await SimpleRetry.network(() => fetch('/api/unstable'));
@@ -101,6 +104,12 @@ if (parseResult.error) {
 
 // Asynchronous operations
 const apiResult = await tryAndCatch(async () => {
+  const response = await fetch('/api/users');
+  return response.json();
+});
+
+// For explicit async (avoids linter warnings)
+const apiResult2 = await tryAndCatchAsync(async () => {
   const response = await fetch('/api/users');
   return response.json();
 });
@@ -188,11 +197,14 @@ logger.error('Operation failed', serializable);
 
 ### Core Functions
 
-#### `tryAndCatch<T>(fn, onFinally?): Result<T>`
-Safe execution with optional cleanup. Works with both sync and async functions.
+#### `tryAndCatch<T>(fn, onFinally?): Result<T> | Promise<Result<T>>`
+Safe execution with optional cleanup. Maintains sync/async consistency.
+
+#### `tryAndCatchAsync<T>(fn, onFinally?): Promise<Result<T>>`
+Explicitly async version. Use this to avoid linter warnings with async functions.
 
 #### `tryAndCatchWithRetry<T>(fn, options, onFinally?): Promise<RetryResult<T>>`
-Advanced retry logic with full configuration control.
+Advanced retry logic with full configuration control. Always returns a Promise.
 
 ### Simplified APIs
 
@@ -331,6 +343,12 @@ const asyncResult = await tryAndCatch(async () => fetch('/api')); // Result<Resp
 // Custom types
 interface User { id: string; name: string; }
 const userResult: Result<User> = tryAndCatch(() => getUser());
+
+// For async functions - use tryAndCatchAsync to avoid linter warnings
+const { error, result } = await tryAndCatchAsync(async () => {
+  const response = await fetch('/api/data');
+  return response.json();
+});
 ```
 
 ## 📊 Performance
@@ -343,7 +361,7 @@ const userResult: Result<User> = tryAndCatch(() => getUser());
 
 ## 🏅 Test Coverage
 
-**45 comprehensive tests** covering:
+**48 comprehensive tests** covering:
 - ✅ Basic sync/async operations
 - ✅ Error context preservation  
 - ✅ Resource safety and cleanup

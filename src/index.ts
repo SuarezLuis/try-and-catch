@@ -222,6 +222,14 @@ export function tryAndCatch<T>(
  * ```
  */
 export function tryAndCatch<T>(
+  fn: () => T,
+  onFinally?: () => void | Promise<void>
+): Result<T>;
+export function tryAndCatch<T>(
+  fn: () => Promise<T>,
+  onFinally?: () => void | Promise<void>
+): Promise<Result<T>>;
+export function tryAndCatch<T>(
   fn: () => T | Promise<T>,
   onFinally?: () => void | Promise<void>
 ): Result<T> | Promise<Result<T>> {
@@ -857,3 +865,48 @@ export const ErrorUtils = {
     }
   },
 };
+
+/**
+ * Async-specific version of tryAndCatch that always returns a Promise.
+ * Use this when you know you're working with async functions to avoid linter warnings.
+ *
+ * @template T - The return type of the async function
+ * @param fn - The async function to execute safely
+ * @param onFinally - Optional cleanup callback
+ * @returns Promise with result and error properties
+ *
+ * @example
+ * ```typescript
+ * // No linter warnings with this version
+ * const { result, error } = await tryAndCatchAsync(async () => {
+ *   const response = await fetch('/api/data');
+ *   return response.json();
+ * });
+ * ```
+ */
+export async function tryAndCatchAsync<T>(
+  fn: () => Promise<T>,
+  onFinally?: () => void | Promise<void>
+): Promise<Result<T>> {
+  try {
+    const result = await fn();
+
+    // Success - run enhanced cleanup
+    await executeCleanup(onFinally);
+
+    return {
+      result,
+      error: null,
+    };
+  } catch (error) {
+    const contextualError = createContextualError(error);
+
+    // Run enhanced cleanup with error context
+    await executeCleanup(onFinally, contextualError);
+
+    return {
+      result: null,
+      error: contextualError,
+    };
+  }
+}
